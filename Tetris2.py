@@ -8,19 +8,11 @@ from Neural import Population
 sz  = 15 # cell size
 cols = 10
 rows = 20
-<<<<<<< HEAD
-maxfps = 30
-START_DELAY = 500
-MIN_DELAY = 20
-POP_SIZE = 100
-MAXCOUNT = maxfps / ( START_DELAY / 1000)
-=======
 maxfps = 100
 START_DELAY = 20
 MIN_DELAY = 20
 POP_SIZE = 100
 MAX_COUNT = 3
->>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
 #
 colors = ['white','red','brown','cyan','orange','magenta','yellow','green'];
 tetrominoes = [
@@ -197,6 +189,7 @@ class Tetris(object):
             self.curr_y = y
 
     def printScores(self, i):
+
         # print next piece
         text = self.myfont.render('Next Piece:', False, (0, 0, 0))
         self.screen.blit(text, (cols * sz + 30, 10))
@@ -221,12 +214,12 @@ class Tetris(object):
 
         # merge the current piece to the grid and change all the colours to 1
         n = copy.deepcopy(self.grid)
-        p = toPiece(self.curr, self.rotation)
+        p = copy.deepcopy(toPiece(self.curr, self.rotation))
         for i, r in enumerate(n):
             for j, q in enumerate(r):
                 if q:
                     n[i][j] = 1
-        #make the current piece 1, all other pieces 2
+        #make the current piece 1, all other pieces 0.5
         for i, r in enumerate(p):
             for j, q in enumerate(r):
                 if q:
@@ -284,36 +277,24 @@ class Tetris(object):
 
     def play(self):
         self.gameover = False
-<<<<<<< HEAD
-        COUNT = 0
-        dont_burn_my_cpu = pygame.time.Clock()
-=======
 
         #dont_burn_my_cpu = pygame.time.Clock()
->>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
         while 1:
-            # Running simulation for the entire population (not showing)
             for i in range(self.pop.size):
                 count = 0
                 while 1:
-
-                    pygame.time.set_timer(pygame.USEREVENT, START_DELAY)
                     if self.gameover:
                         print(i, "Fitness:", self.pop.pop[i].fitness)
                         self.init()
                         break
-                    else:
-
+                    elif self.shouldDraw:
                         self.screen.fill((255, 255, 255))
+                        #sys.stdin.read(1)
                         self.draw(self.grid, 0, 0)
                         self.draw(toPiece(self.curr, self.rotation), self.curr_x, self.curr_y)
                         pygame.draw.line(self.screen, (0, 0, 0), (cols * sz + 2, 0), (cols * sz + 2, self.height))
 
-<<<<<<< HEAD
-                        self.printScores(0)
-=======
                         self.printScores(i)
->>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
 
                         self.neuralInput(self.pop.pop[i])
                         self.timeAlive += 1
@@ -323,8 +304,6 @@ class Tetris(object):
                         self.pop.pop[i].level = self.level
                         self.pop.pop[i].setFitness()
 
-<<<<<<< HEAD
-=======
                         count += 1
                         if count > MAX_COUNT:
                             self.gravity()
@@ -332,61 +311,16 @@ class Tetris(object):
 
                         #print(i)
                         self.keyboardInput(True)
->>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
                         pygame.display.update()
 
-                        #do gravity stuff
-                        COUNT += 1
-                        if COUNT > MAXCOUNT:
-                            COUNT = 0
-                            self.gravity()
 
-                        dont_burn_my_cpu.tick(10000)
+                    # put neural network controls here
 
-<<<<<<< HEAD
-            self.pop.setBest()
-
-            #show best run
-            pygame.time.set_timer(pygame.USEREVENT, START_DELAY)
-            while 1:
-                if self.gameover:
-                    print("Fitness:", self.pop.pop[0].fitness)
-                    self.init()
-                    break
-                elif self.shouldDraw:
-                    self.screen.fill((255, 255, 255))
-                    # sys.stdin.read(1)
-                    self.draw(self.grid, 0, 0)
-                    self.draw(toPiece(self.curr, self.rotation), self.curr_x, self.curr_y)
-                    pygame.draw.line(self.screen, (0, 0, 0), (cols * sz + 2, 0), (cols * sz + 2, self.height))
-
-                    self.printScores(0)
-                    pygame.display.update()
-
-                self.neuralInput(self.pop.pop[0])
-                self.timeAlive += 1
-                self.pop.pop[0].timeAlive = self.played
-                self.pop.pop[0].score = self.score
-                self.pop.pop[0].lines = self.lines
-                self.pop.pop[0].level = self.level
-                self.pop.pop[0].setFitness()
-                # print(i)
-                self.keyboardInput(True)
-                pygame.display.update()
-
-                dont_burn_my_cpu.tick(maxfps)
-
-            self.pop.evolve()
-
-
-
-=======
                     #dont_burn_my_cpu.tick(maxfps)
 
             self.pop.pop = self.pop.evolve()
             pygame.event.get()
             #pygame.time.set_timer(pygame.USEREVENT, START_DELAY)
->>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
 
 
 if __name__ == '__main__':

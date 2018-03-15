@@ -154,6 +154,8 @@ class Population():
     #create next generation of individuals
     def evolve(self):
         print("EVOLLLVE")
+        self.setBest()
+        print("BEST:", self.globalBest)
         self.gen += 1
 
         #copy best 3 without mutation
