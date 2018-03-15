@@ -8,10 +8,11 @@ from Neural import Population
 sz  = 15 # cell size
 cols = 10
 rows = 20
-maxfps = 1000000
+maxfps = 100
 START_DELAY = 20
 MIN_DELAY = 20
 POP_SIZE = 100
+MAX_COUNT = 3
 #
 colors = ['white','red','brown','cyan','orange','magenta','yellow','green'];
 tetrominoes = [
@@ -194,7 +195,7 @@ class Tetris(object):
         self.screen.blit(text, (cols * sz + 30, 10))
         self.draw(toPiece(self.next, 0), cols + 1, 0)
         # scores
-        text = self.myfont.render('Score: ' + str(self.score + self.timeAlive), False, (0, 0, 0))
+        text = self.myfont.render('Score: ' + str(self.score + self.pop.pop[i].timeAlive), False, (0, 0, 0))
         self.screen.blit(text, (cols * sz + 30, 100))
         text = self.myfont.render('Level: ' + str(self.level), False, (0, 0, 0))
         self.screen.blit(text, (cols * sz + 30, 120))
@@ -208,6 +209,7 @@ class Tetris(object):
         self.screen.blit(text, (cols * sz + 30, 200))
         text = self.myfont.render('Last gen best: ' + str(self.pop.currentBest), False, (0, 0, 0))
         self.screen.blit(text, (cols * sz + 30, 220))
+
     def neuralInput(self, individual):
 
         # merge the current piece to the grid and change all the colours to 1
@@ -251,12 +253,15 @@ class Tetris(object):
     def keyboardInput(self, Play):
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.USEREVENT:
-                self.gravity()
+            #if event.type == pygame.USEREVENT:
+                #self.gravity()
 
-            elif event.type == pygame.KEYDOWN and Play:
+            if event.type == pygame.KEYDOWN and Play:
                 if event.key == pygame.K_ESCAPE:
-                    sys.stdin.read(1)
+                    print("PAUSED")
+                    c = sys.stdin.read(1)
+                    if c == 'q':
+                        raise SystemExit(0)
                 #if event.key == pygame.K_LEFT:
                 #    self.move(-1)
                 #elif event.key == pygame.K_RIGHT:
@@ -273,12 +278,13 @@ class Tetris(object):
     def play(self):
         self.gameover = False
 
-        dont_burn_my_cpu = pygame.time.Clock()
+        #dont_burn_my_cpu = pygame.time.Clock()
         while 1:
             for i in range(self.pop.size):
+                count = 0
                 while 1:
                     if self.gameover:
-                        print("Fitness:", self.pop.pop[i].fitness)
+                        print(i, "Fitness:", self.pop.pop[i].fitness)
                         self.init()
                         break
                     elif self.shouldDraw:
@@ -289,7 +295,6 @@ class Tetris(object):
                         pygame.draw.line(self.screen, (0, 0, 0), (cols * sz + 2, 0), (cols * sz + 2, self.height))
 
                         self.printScores(i)
- 
 
                         self.neuralInput(self.pop.pop[i])
                         self.timeAlive += 1
@@ -299,6 +304,10 @@ class Tetris(object):
                         self.pop.pop[i].level = self.level
                         self.pop.pop[i].setFitness()
 
+                        count += 1
+                        if count > MAX_COUNT:
+                            self.gravity()
+                            count = 0
 
                         #print(i)
                         self.keyboardInput(True)
@@ -307,10 +316,11 @@ class Tetris(object):
 
                     # put neural network controls here
 
-                    dont_burn_my_cpu.tick(maxfps)
+                    #dont_burn_my_cpu.tick(maxfps)
 
-            self.pop.evolve()
-            pygame.time.set_timer(pygame.USEREVENT, START_DELAY)
+            self.pop.pop = self.pop.evolve()
+            pygame.event.get()
+            #pygame.time.set_timer(pygame.USEREVENT, START_DELAY)
 
 
 if __name__ == '__main__':

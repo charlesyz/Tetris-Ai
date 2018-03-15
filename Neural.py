@@ -22,7 +22,7 @@ class Network():
             for j, c in enumerate(r):
                 # if selected to mutate
                 if random.uniform(0, 1) < rate:
-                    matrix[i][j] += np.random.normal(0,0.25)
+                    matrix[i][j] += matrix[i][j] * np.random.normal(0,0.25)
                     if matrix[i][j] > 1:
                         matrix[i][j] = 1
                     elif matrix[i][j] < -1:
@@ -119,8 +119,9 @@ class Population():
         self.gen = 1
         self.globalBest = 0.0 #global best score
         self.currentBest = 0.0 #current best score
-        self.keep = sz // 4
+        self.keep = 10
         self.data = np.random.randint(0, 7, size=1000)
+        self.elite = 3
 
         self.pop = []
         for _ in range(sz):
@@ -129,18 +130,18 @@ class Population():
 
     def save(self):
         ts = time.time()
-        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S') + " " + str(self.globalBest)
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S') + " " + self.gen + " " + str(self.globalBest)
         np.savez(st, iWeights = self.globalBestIndividual.brain.iWeights, hWeights = self.globalBestIndividual.brain.hWeights,
                  oWeights = self.globalBestIndividual.brain.oWeights, data = self.globalBestIndividual.data)
-
-
 
     def setBest(self):
         # sort list based on fitness
         self.pop.sort(key=operator.attrgetter('fitness'), reverse= True)
 
-        #for i in range(self.size):
-        #    print(self.pop[i].fitness)
+        self.totalFitness = 0
+
+        for i in range(self.size):
+            self.totalFitness += self.pop[i].fitness
 
         self.currentBest = self.pop[0].fitness
         print("current best", self.currentBest, "global best", self.globalBest)
@@ -157,23 +158,46 @@ class Population():
         print("BEST:", self.globalBest)
         self.gen += 1
 
-        #copy best without mutation
+        #copy best 3 without mutation
         # one buffer since the first individual always gets messed up due to computation time
-        new = [Individual(), self.pop[0].clone()]
-        for i in range(1, self.size - 1):
-            if i < self.keep:
-                new.append(self.pop[i].clone())
+        new = [] #Individual()
+        for i in range(0, self.size):
+            print(i)
+            if i < self.elite:
+                print ("keep, don't mutate")
+                new.append(self.pop[i])
+                continue # don't mutate
+            elif i < self.keep:
+                print("keep")
+                new.append(self.pop[i]) #mutate though
             #keep some
-            elif random.uniform(0, 1) > 0.95:
-                new.append(self.pop[i].clone())
+            elif random.uniform(0, 1) > 0.90:
+                print("keep")
+                new.append(self.pop[i])
             #get random offspring for the rest
             else:
-                new.append(self.pop[random.randrange(self.keep // 2)].breed(self.pop[random.randrange(self.keep)]))
+                #selecting parents using Roulette Sampling
+                current = 0
+                limA = random.randrange(self.totalFitness)
+                limB = random.randrange(self.totalFitness)
+                a = -1
+                b = -1
+                for j in range(self.size):
+                    current += self.pop[j].fitness
+                    if limA < current and a == -1:
+                        a = j
+                    if limB < current and b == -1:
+                        b = j
+
+                print("mate", a, "with", b)
+                new.append(self.pop[a].breed(self.pop[b]))
             #MUTATE THEM!
+            print("mutating!")
             new[i].brain.mutateAll(0.1)
 
         #get new data
-        self.data = np.random.randint(0, 7, size=1000)
+        #self.data = np.random.randint(0, 7, size=1000)
 
+        time.sleep(1)
         return new
 
