@@ -133,8 +133,6 @@ class Population():
         np.savez(st, iWeights = self.globalBestIndividual.brain.iWeights, hWeights = self.globalBestIndividual.brain.hWeights,
                  oWeights = self.globalBestIndividual.brain.oWeights, data = self.globalBestIndividual.data)
 
-
-
     def setBest(self):
         # sort list based on fitness
         self.pop.sort(key=operator.attrgetter('fitness'), reverse= True)
@@ -153,8 +151,6 @@ class Population():
     #create next generation of individuals
     def evolve(self):
         print("EVOLLLVE")
-        self.setBest()
-        print("BEST:", self.globalBest)
         self.gen += 1
 
         #copy best without mutation
