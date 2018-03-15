@@ -8,11 +8,19 @@ from Neural import Population
 sz  = 15 # cell size
 cols = 10
 rows = 20
+<<<<<<< HEAD
 maxfps = 30
 START_DELAY = 500
 MIN_DELAY = 20
 POP_SIZE = 100
 MAXCOUNT = maxfps / ( START_DELAY / 1000)
+=======
+maxfps = 100
+START_DELAY = 20
+MIN_DELAY = 20
+POP_SIZE = 100
+MAX_COUNT = 3
+>>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
 #
 colors = ['white','red','brown','cyan','orange','magenta','yellow','green'];
 tetrominoes = [
@@ -194,7 +202,7 @@ class Tetris(object):
         self.screen.blit(text, (cols * sz + 30, 10))
         self.draw(toPiece(self.next, 0), cols + 1, 0)
         # scores
-        text = self.myfont.render('Score: ' + str(self.score + self.timeAlive), False, (0, 0, 0))
+        text = self.myfont.render('Score: ' + str(self.score + self.pop.pop[i].timeAlive), False, (0, 0, 0))
         self.screen.blit(text, (cols * sz + 30, 100))
         text = self.myfont.render('Level: ' + str(self.level), False, (0, 0, 0))
         self.screen.blit(text, (cols * sz + 30, 120))
@@ -252,12 +260,15 @@ class Tetris(object):
     def keyboardInput(self, Play):
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.USEREVENT:
-                self.gravity()
+            #if event.type == pygame.USEREVENT:
+                #self.gravity()
 
-            elif event.type == pygame.KEYDOWN and Play:
+            if event.type == pygame.KEYDOWN and Play:
                 if event.key == pygame.K_ESCAPE:
-                    sys.stdin.read(1)
+                    print("PAUSED")
+                    c = sys.stdin.read(1)
+                    if c == 'q':
+                        raise SystemExit(0)
                 #if event.key == pygame.K_LEFT:
                 #    self.move(-1)
                 #elif event.key == pygame.K_RIGHT:
@@ -273,16 +284,22 @@ class Tetris(object):
 
     def play(self):
         self.gameover = False
+<<<<<<< HEAD
         COUNT = 0
         dont_burn_my_cpu = pygame.time.Clock()
+=======
+
+        #dont_burn_my_cpu = pygame.time.Clock()
+>>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
         while 1:
             # Running simulation for the entire population (not showing)
             for i in range(self.pop.size):
+                count = 0
                 while 1:
 
                     pygame.time.set_timer(pygame.USEREVENT, START_DELAY)
                     if self.gameover:
-                        print("Fitness:", self.pop.pop[i].fitness)
+                        print(i, "Fitness:", self.pop.pop[i].fitness)
                         self.init()
                         break
                     else:
@@ -292,7 +309,11 @@ class Tetris(object):
                         self.draw(toPiece(self.curr, self.rotation), self.curr_x, self.curr_y)
                         pygame.draw.line(self.screen, (0, 0, 0), (cols * sz + 2, 0), (cols * sz + 2, self.height))
 
+<<<<<<< HEAD
                         self.printScores(0)
+=======
+                        self.printScores(i)
+>>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
 
                         self.neuralInput(self.pop.pop[i])
                         self.timeAlive += 1
@@ -302,6 +323,16 @@ class Tetris(object):
                         self.pop.pop[i].level = self.level
                         self.pop.pop[i].setFitness()
 
+<<<<<<< HEAD
+=======
+                        count += 1
+                        if count > MAX_COUNT:
+                            self.gravity()
+                            count = 0
+
+                        #print(i)
+                        self.keyboardInput(True)
+>>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
                         pygame.display.update()
 
                         #do gravity stuff
@@ -312,6 +343,7 @@ class Tetris(object):
 
                         dont_burn_my_cpu.tick(10000)
 
+<<<<<<< HEAD
             self.pop.setBest()
 
             #show best run
@@ -348,6 +380,13 @@ class Tetris(object):
 
 
 
+=======
+                    #dont_burn_my_cpu.tick(maxfps)
+
+            self.pop.pop = self.pop.evolve()
+            pygame.event.get()
+            #pygame.time.set_timer(pygame.USEREVENT, START_DELAY)
+>>>>>>> 26307f352bd0979fc9f69228e3de3b3638d033fe
 
 
 if __name__ == '__main__':
