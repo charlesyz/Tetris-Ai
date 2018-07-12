@@ -22,7 +22,7 @@ Once each individual has gotten their fitness score, natural selection occurs. I
 
 Now that the next generation has been populated, the cycle repeats!
 
-##Final Results
+## Final Results
 During the march break, I successfully created a neural network that could play tetris - sorta. The algorithm did definitely get better over time, though not much better. Here is the best run after over 12 hours of training and 187 generations
 ![Alt Text](https://media.giphy.com/media/45eLUMADLV3WTXzyIb/giphy.gif)
 
