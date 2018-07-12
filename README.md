@@ -1,7 +1,7 @@
 # Tetris-Ai
 AI developed to play Tetris using a neural network and genetic algorithm
 
-# How to Run
+## How to Run
 If you would like to run the neural network for yourself, simply download Tetris2.py and Neural.py and run Tetris2.py with Python 3. The Tetris AI uses NumPy for array handling, but other than that there are no required packages.
 
 ## Intro
