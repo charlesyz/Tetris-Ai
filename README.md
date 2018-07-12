@@ -8,10 +8,10 @@ If you would like to run the neural network for yourself, simply download Tetris
 Over the March Break Week of 2018, I wanted to delve into machine learning.
 I decided to build on my previous project where I created a Tetris clone in C by creating an AI that would play the game. However, I decided to use Python as I thought it'd be a great opportunity to learn a new language. Python also has great neural network libraries that I want to learn in the future, such as OpenAI. So, I had one week to learn python, learn about Neural Networks, and create a neural network from scratch.
 
-##Overview
+## Overview
 The Tetris AI uses a three layer neural network with 200 input neurons (each tile of the 20x10 game grid), 24 hidden neurons, and 4 output neurons (rotate, move left, move right, do nothing). To improve, the AI uses a genetic algorithm evolution system with a roulette selection system
 
-###The Neural Network
+### The Neural Network
 Each neuron has its own sets of weights - how much it takes into account the value of each of the previous layer's neurons. Using the values of the previous layer and the weights of the specific neuron, each neuron comes up with its own value (between -1 and 1). Each layer  uses and builds upon the previous layer, untill each neuron in the final layer (the output layer) has gotten its value. The neuron in the output layer with the highest value decides the action to be taken.
 
 ### Evolution
